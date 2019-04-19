@@ -1,0 +1,10 @@
+.odc-graph-toolbar {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  max-width: calc(100% - 32px);
+
+  & > * {
+    margin: 0 8px 8px 0;
+  }
+}
