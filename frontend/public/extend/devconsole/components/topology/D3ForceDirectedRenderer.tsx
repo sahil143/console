@@ -24,7 +24,7 @@ export interface D3ForceDirectedRendererProps {
   topology: TopologyDataMap;
   nodeProvider: NodeProvider;
   edgeProvider: EdgeProvider;
-  nodeRadius: number;
+  nodeSize: number;
   selected?: string;
   onSelect?(Node): void;
 }
@@ -57,7 +57,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
 
     this.simulation = d3
       .forceSimulation(props.graph.nodes)
-      .force('collide', d3.forceCollide().radius(props.nodeRadius))
+      .force('collide', d3.forceCollide().radius(props.nodeSize))
       .force('link', d3.forceLink(props.graph.edges).id((d: ViewNode) => d.id))
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(props.width / 2, props.height / 2));
@@ -169,7 +169,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
       height,
       nodeProvider,
       edgeProvider,
-      nodeRadius,
+      nodeSize,
       selected,
       onSelect,
       topology,
@@ -192,8 +192,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
               return (
                 <ViewWrapper
                   component={Component}
-                  width={nodeRadius * 2}
-                  height={nodeRadius * 2}
+                  size={nodeSize}
                   {...node}
                   node={node}
                   data={topology[node.id]}

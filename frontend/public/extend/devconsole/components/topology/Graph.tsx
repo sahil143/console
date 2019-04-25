@@ -69,7 +69,7 @@ export default class Graph extends React.Component<GraphProps, State> {
       <div ref={measureRef} className="odc-graph">
         {dimensions && (
           <Renderer
-            nodeRadius={50}
+            nodeSize={100}
             height={dimensions.height}
             width={dimensions.width}
             // TODO transform instead of blind cast

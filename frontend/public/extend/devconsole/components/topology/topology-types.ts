@@ -97,8 +97,7 @@ export interface Selectable {
 export type ViewNode = Node & {
   x?: number;
   y?: number;
-  width?: number;
-  height?: number;
+  size?: number;
 };
 
 export type ViewEdge = Edge & {

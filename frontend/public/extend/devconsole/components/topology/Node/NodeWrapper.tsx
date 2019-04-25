@@ -6,16 +6,13 @@ import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import WorkloadNode from './WorkloadNode';
 
-
 type NodeWrapperProps = {
-  height: number;
-  width: number;
+  size: number;
   selected: boolean;
   nodeData: any; //Change this to type of Node Data
   x: number;
   y: number;
   onSelect: Function;
-  radius?: number;
 };
 
 type NodeWrapperState = {
@@ -52,8 +49,8 @@ class NodeWrapper extends React.Component<NodeWrapperProps, NodeWrapperState> {
   };
 
   render() {
-    const { height, nodeData, selected, x, y, onSelect } = this.props;
-    this.radius = this.props.radius ? this.props.radius : height / 2;
+    const { size, nodeData, selected, x, y, onSelect } = this.props;
+    this.radius = size / 2;
     this.strokeWidth = this.radius * 0.15;
     this.whiteSpaceBWPodAndOuterRadius = this.strokeWidth / 2;
     this.whiteSpaceBWPodAndInnerRadius = this.strokeWidth;
