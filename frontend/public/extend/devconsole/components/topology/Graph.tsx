@@ -54,7 +54,7 @@ export default class Graph extends React.Component<GraphProps, State> {
     this.setState({ graphApi: r ? r.api() : null });
   };
 
-  render() {
+  renderMeasure = ({ measureRef }) => {
     const {
       children,
       graph,
@@ -65,29 +65,32 @@ export default class Graph extends React.Component<GraphProps, State> {
       topology,
     } = this.props;
     const { dimensions, graphApi } = this.state;
+    return (
+      <div ref={measureRef} className="odc-graph">
+        {dimensions && (
+          <Renderer
+            nodeRadius={50}
+            height={dimensions.height}
+            width={dimensions.width}
+            // TODO transform instead of blind cast
+            graph={graph as ViewGraphData}
+            topology={topology}
+            nodeProvider={nodeProvider}
+            edgeProvider={edgeProvider}
+            ref={this.captureApiRef}
+            onSelect={onSelect}
+            selected={selected}
+          />
+        )}
+        {children && graphApi && children(graphApi)}
+      </div>
+    );
+  };
 
+  render() {
     return (
       <ReactMeasure client onResize={this.onMeasure}>
-        {({ measureRef }) => (
-          <div ref={measureRef} className="odc-graph">
-            {dimensions && (
-              <Renderer
-                nodeRadius={50}
-                height={dimensions.height}
-                width={dimensions.width}
-                // TODO transform instead of blind cast
-                graph={graph as ViewGraphData}
-                topology={topology}
-                nodeProvider={nodeProvider}
-                edgeProvider={edgeProvider}
-                ref={this.captureApiRef}
-                onSelect={onSelect}
-                selected={selected}
-              />
-            )}
-            {children && graphApi && children(graphApi)}
-          </div>
-        )}
+        {this.renderMeasure}
       </ReactMeasure>
     );
   }

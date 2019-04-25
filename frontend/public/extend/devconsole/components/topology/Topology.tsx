@@ -22,9 +22,23 @@ export default class Topology extends React.Component<TopologyProps, State> {
 
   onSelect = (node: Node) => {
     this.setState(({ selected }) => {
-      return { selected: node ? (selected === node.id ? null : node.id) : null };
+      return { selected: !node || selected === node.id ? null : node.id };
     });
   };
+
+  renderToolbar = (graphApi: GraphApi) => (
+    <GraphToolbar>
+      <Button onClick={graphApi.zoomOut} title="Zoom Out" aria-label="Zoom Out">
+        <MinusIcon />
+      </Button>
+      <Button onClick={graphApi.zoomIn} title="Zoom In" aria-label="Zoom In">
+        <PlusIcon />
+      </Button>
+      <Button onClick={graphApi.resetView} title="Reset Zoom" aria-label="Reset Zoom">
+        <ExpandIcon />
+      </Button>
+    </GraphToolbar>
+  );
 
   render() {
     return (
@@ -36,19 +50,7 @@ export default class Topology extends React.Component<TopologyProps, State> {
         selected={this.state.selected}
         onSelect={this.onSelect}
       >
-        {(graphApi: GraphApi) => (
-          <GraphToolbar>
-            <Button onClick={graphApi.zoomOut} title="Zoom Out" aria-label="Zoom Out">
-              <MinusIcon />
-            </Button>
-            <Button onClick={graphApi.zoomIn} title="Zoom In" aria-label="Zoom In">
-              <PlusIcon />
-            </Button>
-            <Button onClick={graphApi.resetView} title="Reset Zoom" aria-label="Reset Zoom">
-              <ExpandIcon />
-            </Button>
-          </GraphToolbar>
-        )}
+        {this.renderToolbar}
       </Graph>
     );
   }
