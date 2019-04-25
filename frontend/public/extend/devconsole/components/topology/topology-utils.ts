@@ -190,7 +190,7 @@ export class TransformTopologyData {
     const { metadata } = deploymentConfig;
     const currentNode = {
       id: metadata.uid,
-      type: 'node',
+      type: 'workload',
       name: metadata.name,
     };
 
