@@ -75,9 +75,9 @@ export interface TopologyDataObject<D = {}> {
 }
 
 export interface WorkloadData {
-  url: string;
-  editUrl: string;
-  builderImage: string;
+  url?: string;
+  editUrl?: string;
+  builderImage?: string;
   donutStatus: {
     pods: Pod[];
   };

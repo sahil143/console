@@ -85,9 +85,9 @@ export class TransformTopologyData {
           return resource;
         }),
         data: {
-          url: 'dummy_url',
-          editUrl: 'dummy_edit_url',
-          builderImage: deploymentsLabels['app.kubernetes.io/name'] || 'default',
+          // url: 'dummy_url',
+          // editUrl: 'dummy_edit_url',
+          builderImage: deploymentsLabels['app.kubernetes.io/name'],
           donutStatus: {
             pods: _.map(dcPods, (pod) =>
               _.merge(_.pick(pod, 'metadata', 'status'), {

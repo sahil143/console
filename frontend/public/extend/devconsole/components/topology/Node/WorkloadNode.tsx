@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { TransitionMotion, Motion, spring } from 'react-motion';
 import { pie, arc } from 'd3';
+import { Pod } from '../topology-types';
 
 export const podColor = {
   Running: '#00b9e4',
@@ -20,12 +21,12 @@ export const podColor = {
 type WorkloadNodeProps = {
   x?: number;
   y?: number;
-  data: any;
+  data: Pod[];
   innerRadius: number;
   outerRadius: number;
 };
 
-export default class WorkloadNode extends React.PureComponent<WorkloadNodeProps, {}> {
+export default class WorkloadNode extends React.PureComponent<WorkloadNodeProps> {
   willLeave = ({ style }) => {
     return {
       ...style,
@@ -40,7 +41,7 @@ export default class WorkloadNode extends React.PureComponent<WorkloadNodeProps,
     };
   };
 
-  chooseColor = (d, i) => {
+  chooseColor = (d) => {
     return { fill: podColor[d.status.phase] };
   };
 
@@ -95,10 +96,7 @@ export default class WorkloadNode extends React.PureComponent<WorkloadNodeProps,
                   }}
                 >
                   {(interStyle) => (
-                    <path
-                      d={arcFunc(interStyle)}
-                      style={this.chooseColor(c.data.podData, c.data.index)}
-                    />
+                    <path d={arcFunc(interStyle)} style={this.chooseColor(c.data.podData)} />
                   )}
                 </Motion>
               ))}

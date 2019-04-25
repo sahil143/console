@@ -34,33 +34,22 @@ const BaseNode: React.FunctionComponent<BaseNodeProps> = ({
         : null
     }
   >
-    <defs>
-      <pattern
-        id="image"
-        x="0"
-        y="0"
-        height="100%"
-        width="100%"
-        viewBox={`0 0 ${innerRadius} ${innerRadius}`}
-      >
-        <image
-          x="0"
-          y="0"
-          width={innerRadius}
-          height={innerRadius}
-          xlinkHref={icon ? `/static/assets/${icon}.svg` : '/static/assets/openshift.svg'}
-        />
-      </pattern>
-    </defs>
     <circle cx={0} cy={0} r={outerRadius} fill="#fff" />
-    <circle cx={0} cy={0} r={innerRadius} fill="url(#image)" />
+    <image
+      x={-innerRadius}
+      y={-innerRadius}
+      width={innerRadius * 2}
+      height={innerRadius * 2}
+      xlinkHref={icon ? `/static/assets/${icon}.svg` : '/static/assets/openshift.svg'}
+      onError={(e) => e.currentTarget.setAttribute('xlink:href', '/static/assets/openshift.svg')}
+    />
     <text
       textAnchor="middle"
       style={{ fontSize: outerRadius * 0.25 }}
       y={outerRadius + outerRadius * 0.25}
       x={0}
     >
-      {label ? label : 'DeploymentConfig'}
+      {label}
     </text>
     {selected && (
       <circle
