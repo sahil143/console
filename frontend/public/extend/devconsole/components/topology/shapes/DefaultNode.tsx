@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { NodeProps } from '../topology-types';
 import './DefaultNode.scss';
@@ -27,6 +28,13 @@ const DefaultNode: React.FC<DefaultNodeProps> = ({
         : null
     }
   >
+    <defs>
+      <filter id="nodeDropShadow" width="150%" height="150%">
+        {/*
+          // @ts-ignore */}
+        <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#030303" floodOpacity="0.15" />
+      </filter>
+    </defs>
     <circle
       className="odc-default-node"
       filter="url(#nodeDropShadow)"

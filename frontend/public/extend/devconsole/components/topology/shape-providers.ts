@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-undef */
 import DefaultEdge from './shapes/DefaultEdge';
 import DefaultNode from './shapes/DefaultNode';
 import { NodeProvider, EdgeProvider } from './topology-types';

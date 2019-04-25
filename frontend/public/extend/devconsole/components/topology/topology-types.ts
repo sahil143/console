@@ -1,6 +1,6 @@
+/* eslint-disable no-unused-vars, no-undef */
 import { ComponentType } from 'react';
-import { ObjectMetadata } from 'public/module/k8s';
-import { K8sResourceKind } from 'public/module/k8s';
+import { ObjectMetadata } from '../../../../module/k8s';
 
 export interface ResourceProps {
   kind: string;
@@ -10,9 +10,11 @@ export interface ResourceProps {
     selector?: {};
   };
 }
+
 export interface Resource {
   data: ResourceProps[];
 }
+
 export interface TopologyDataResources {
   replicationControllers: Resource;
   pods: Resource;
@@ -42,15 +44,19 @@ export interface Group {
   nodes: string[];
 }
 
+export interface GraphModel {
+  nodes: Node[];
+  edges: Edge[];
+  groups: Group[];
+}
+
+export interface TopologyDataMap {
+  [id: string]: TopologyDataObject;
+}
+
 export interface TopologyDataModel {
-  graph: {
-    nodes: Node[];
-    edges: Edge[];
-    groups: Group[];
-  };
-  topology: {
-    [key: string]: TopologyNodeObject;
-  };
+  graph: GraphModel;
+  topology: TopologyDataMap;
 }
 export interface Pod {
   id: string;
@@ -59,25 +65,22 @@ export interface Pod {
   metadata: {};
   status: {};
 }
-export interface TopologyNodeObject {
+
+export interface TopologyDataObject<D = {}> {
   id: string;
   name: string;
   type: string;
   resources: Resource[];
-  data: {
-    url: string;
-    editUrl: string;
-    builderImage: string;
-    donutStatus: {
-      pods: Pod[];
-    };
-  };
+  data: D;
 }
 
-export interface GraphModel {
-  nodes: Node[];
-  edges: Edge[];
-  groups: Group[];
+export interface WorkloadData {
+  url: string;
+  editUrl: string;
+  builderImage: string;
+  donutStatus: {
+    pods: Pod[];
+  };
 }
 
 export interface GraphApi {
@@ -89,12 +92,6 @@ export interface GraphApi {
 export interface Selectable {
   selected?: boolean;
   onSelect?(): void;
-}
-
-export interface ViewGraphData {
-  nodes: ViewNode[];
-  edges: ViewEdge[];
-  groups: ViewGroup[];
 }
 
 export type ViewNode = Node & {
@@ -111,35 +108,25 @@ export type ViewEdge = Edge & {
 
 export type ViewGroup = Group;
 
-export type NodeProps = ViewNode &
+export interface ViewGraphData {
+  nodes: ViewNode[];
+  edges: ViewEdge[];
+  groups: ViewGroup[];
+}
+
+export type NodeProps<D = {}> = ViewNode &
   Selectable & {
-    data?: TopologyDataModel;
+    data?: TopologyDataObject<D>;
   };
-export type EdgeProps = ViewEdge & {
-  data?: TopologyDataModel;
+
+export type EdgeProps<D = {}> = ViewEdge & {
+  data?: TopologyDataObject<D>;
 };
 
-export interface TopologyDataModel<D = {}> {
-  id: string;
-  type: string;
-  name: string;
-  resources: K8sResourceKind[];
-  data: D;
-}
-
-export interface TopologyDataMap {
-  [id: string]: TopologyDataModel;
-}
-
-export interface TopologyModel {
-  graph: GraphModel;
-  topology: TopologyDataMap;
-}
-
 export interface NodeProvider {
-  (ViewNode, {}): ComponentType<NodeProps>;
+  (ViewNode, any): ComponentType<NodeProps>;
 }
 
 export interface EdgeProvider {
-  (ViewNode, {}): ComponentType<EdgeProps>;
+  (ViewNode, any): ComponentType<EdgeProps>;
 }

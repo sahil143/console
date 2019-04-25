@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import ReactMeasure from 'react-measure';
-import { debounce } from 'lodash-es';
+import * as _ from 'lodash-es';
 import Renderer from './D3ForceDirectedRenderer';
 import {
   GraphApi,
@@ -36,7 +37,11 @@ export default class Graph extends React.Component<GraphProps, State> {
     graphApi: null,
   };
 
-  onMeasure = debounce((contentRect) => {
+  componentWillUnmount() {
+    this.onMeasure.cancel();
+  }
+
+  onMeasure = _.debounce((contentRect) => {
     this.setState({
       dimensions: {
         width: contentRect.client.width,
@@ -67,7 +72,7 @@ export default class Graph extends React.Component<GraphProps, State> {
           <div ref={measureRef} className="odc-graph">
             {dimensions && (
               <Renderer
-                nodeRadius={100}
+                nodeRadius={50}
                 height={dimensions.height}
                 width={dimensions.width}
                 // TODO transform instead of blind cast

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import * as d3 from 'd3';
 import * as ReactDOM from 'react-dom';
@@ -9,7 +10,7 @@ import {
   EdgeProvider,
   NodeProps,
   TopologyDataMap,
-  TopologyDataModel,
+  TopologyDataObject,
 } from './topology-types';
 
 interface State {
@@ -100,16 +101,18 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   onNodeEnter = (data: ViewNode, domNode: SVGElement) => {
-    d3
-      .select(domNode)
-      .datum(data)
-      .call(
-        d3
-          .drag()
-          .on('start', (d) => this.dragstarted(d))
-          .on('drag', (d) => this.dragged(d))
-          .on('end', (d) => this.dragended(d)),
-      );
+    if (this.props.graph.nodes.length > 1) {
+      d3
+        .select(domNode)
+        .datum(data)
+        .call(
+          d3
+            .drag()
+            .on('start', (d) => this.dragstarted(d))
+            .on('drag', (d) => this.dragged(d))
+            .on('end', (d) => this.dragended(d)),
+        );
+    }
   };
 
   private dragCount: number = 0;
@@ -145,6 +148,7 @@ export default class D3ForceDirectedRenderer extends React.Component<
   };
 
   api() {
+    // eslint-disable-next-line consistent-this
     const self = this;
     return {
       zoomIn() {
@@ -174,11 +178,6 @@ export default class D3ForceDirectedRenderer extends React.Component<
     const { zoomTransform } = this.state;
     return (
       <svg height={height} width={width} ref={this.refSvg}>
-        <filter id="nodeDropShadow" width="150%" height="150%">
-          {/*
-          // @ts-ignore */}
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#030303" floodOpacity="0.15" />
-        </filter>
         <g transform={zoomTransform}>
           <g>
             {edges.map((edge) => {
@@ -193,8 +192,8 @@ export default class D3ForceDirectedRenderer extends React.Component<
               return (
                 <ViewWrapper
                   component={Component}
-                  width={nodeRadius}
-                  height={nodeRadius}
+                  width={nodeRadius * 2}
+                  height={nodeRadius * 2}
                   {...node}
                   node={node}
                   data={topology[node.id]}
@@ -216,11 +215,12 @@ type ViewWrapperProps = NodeProps & {
   component: React.ComponentType<NodeProps>;
   onEnter(ViewNode, Element): void;
   node: ViewNode;
-  data: TopologyDataModel;
+  data: TopologyDataObject;
 };
 
 class ViewWrapper extends React.Component<ViewWrapperProps> {
   componentDidMount() {
+    // eslint-disable-next-line react/no-find-dom-node
     this.props.onEnter && this.props.onEnter(this.props.node, ReactDOM.findDOMNode(this));
   }
 
