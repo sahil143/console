@@ -14,3 +14,10 @@ export const getPodLabels = (name: string) => {
     deploymentconfig: name,
   };
 };
+
+export const getAppAnnotations = (gitUrl: string, gitRef: string) => {
+  return {
+    'app.openshift.io/vcs-uri': gitUrl,
+    'app.openshift.io/vcs-ref': gitRef,
+  };
+};

@@ -9,7 +9,7 @@ import {
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { makePortName } from '../../utils/imagestream-utils';
-import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
+import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
 import { GitImportFormData } from './import-types';
 
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
@@ -133,11 +133,12 @@ export const createDeploymentConfig = (
     deployment: { env, replicas, triggers },
     labels: userLabels,
     limits: { cpu, memory },
+    git: { url: gitUrl, ref: gitRef },
   } = formData;
-
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
   const podLabels = getPodLabels(name);
+  const defaultAnnotations = getAppAnnotations(gitUrl, gitRef && gitRef !== '' ? gitRef : 'master');
 
   const deploymentConfig = {
     apiVersion: 'apps.openshift.io/v1',
@@ -146,6 +147,7 @@ export const createDeploymentConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
+      annotations: { ...defaultAnnotations },
     },
     spec: {
       selector: podLabels,
