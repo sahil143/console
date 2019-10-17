@@ -399,6 +399,7 @@ Object {
             "updatedReplicas": 1,
           },
         },
+        "pipelines": null,
         "pods": Array [
           Object {
             "kind": "Pod",
@@ -1252,6 +1253,7 @@ Object {
           },
           "status": Object {},
         },
+        "pipelines": null,
         "pods": Array [
           Object {
             "kind": "Pod",
@@ -2175,6 +2177,7 @@ Object {
           },
           "status": Object {},
         },
+        "pipelines": null,
         "pods": Array [
           Object {
             "kind": "Pod",

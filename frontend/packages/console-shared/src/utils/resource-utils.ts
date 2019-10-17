@@ -590,7 +590,7 @@ export class TransformResourceData {
       };
 
       const status = resourceStatus(obj, current, isRollingOut);
-      return {
+      const overviewItems = {
         alerts,
         buildConfigs,
         current,
@@ -602,6 +602,13 @@ export class TransformResourceData {
         services,
         status,
       };
+
+      if (this.utils) {
+        return this.utils.reduce((acc, element) => {
+          return { ...acc, ...element(obj, this.resources) };
+        }, overviewItems);
+      }
+      return overviewItems;
     });
   };
 

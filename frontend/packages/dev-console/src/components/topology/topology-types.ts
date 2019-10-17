@@ -3,6 +3,7 @@ import { KebabOption } from '@console/internal/components/utils';
 import { Pod, Resource, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Point } from '../../utils/svg-utils';
+import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
 
 export interface TopologyDataResources {
   replicationControllers: Resource;
@@ -20,6 +21,8 @@ export interface TopologyDataResources {
   revisions?: Resource;
   ksservices?: Resource;
   statefulSets?: Resource;
+  pipelines?: Pipeline;
+  pipelineRuns?: PipelineRun;
 }
 
 export interface Node {
