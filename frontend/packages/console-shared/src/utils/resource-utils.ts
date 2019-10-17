@@ -6,6 +6,7 @@ import {
   PodTemplate,
   RouteKind,
   apiVersionForModel,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
@@ -18,11 +19,14 @@ import {
 } from '@console/internal/models';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
 import { FirehoseResource } from '@console/internal/components/utils';
+import { PipelineRun, Pipeline } from '@console/dev-console/src/utils/pipeline-augment';
+import { PipelineRunModel, PipelineModel } from '@console/dev-console/src/models';
 import {
   BuildConfigOverviewItem,
   OverviewItemAlerts,
   PodControllerOverviewItem,
   OverviewItem,
+  PipelineOverviewItem,
 } from '../types/resource';
 import { PodRCData } from '../types';
 import {
@@ -33,6 +37,7 @@ import {
   CONTAINER_WAITING_STATE_ERROR_REASONS,
   DEPLOYMENT_STRATEGY,
   DEPLOYMENT_PHASE,
+  PIPELINE_REF,
 } from '../constants';
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
@@ -104,6 +109,18 @@ export const getResourceList = (namespace: string, resList?: any) => {
       kind: 'StatefulSet',
       namespace,
       prop: 'statefulSets',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(PipelineRunModel),
+      namespace,
+      prop: 'pipelineRuns',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(PipelineModel),
+      namespace,
+      prop: 'pipelines',
     },
   ];
 
@@ -532,6 +549,30 @@ export class TransformResourceData {
     });
   };
 
+  getPipelineRunsForPipeline = (pipeline: Pipeline): PipelineRun[] => {
+    const PIPELINE_RUN_LABEL = 'tekton.dev/pipeline';
+    const pipelineRuns = _.get(this.resources, ['pipelineRuns', 'data']);
+    const pipelineName = pipeline.metadata.name;
+    return pipelineRuns.filter((pr: PipelineRun) => {
+      return (
+        pipelineName ===
+        (_.get(pr, ['metadata', 'labels', PIPELINE_RUN_LABEL], null) ||
+          _.get(pr, ['spec', 'pipelineRef', 'name'], null))
+      );
+    });
+  };
+
+  getPipelinesForResource = (resource: K8sResourceKind): PipelineOverviewItem => {
+    const pipelines = _.get(this.resources, ['pipelines', 'data']);
+    const pipelineName = _.get(resource, ['metadata', 'labels', PIPELINE_REF], null);
+    if (!pipelineName) return null;
+    const resourcePipeline = pipelines.find((pl) => pl.metadata.name === pipelineName);
+    return {
+      obj: resourcePipeline,
+      pipelineRuns: this.getPipelineRunsForPipeline(resourcePipeline),
+    };
+  };
+
   getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
     switch (resource.kind) {
       case 'Pod':
@@ -582,6 +623,7 @@ export class TransformResourceData {
       const [current, previous] = replicationControllers;
       const isRollingOut = getRolloutStatus(obj, current, previous);
       const buildConfigs = this.getBuildConfigsForResource(obj);
+      const pipelines = this.getPipelinesForResource(obj);
       const services = this.getServicesForResource(obj);
       const routes = this.getRoutesForServices(services);
       const alerts = {
@@ -601,6 +643,7 @@ export class TransformResourceData {
         routes,
         services,
         status,
+        pipelines,
       };
     });
   };
@@ -616,6 +659,7 @@ export class TransformResourceData {
       const [current, previous] = replicaSets;
       const isRollingOut = !!current && !!previous;
       const buildConfigs = this.getBuildConfigsForResource(obj);
+      const pipelines = this.getPipelinesForResource(obj);
       const services = this.getServicesForResource(obj);
       const routes = this.getRoutesForServices(services);
       const alerts = {
@@ -634,6 +678,7 @@ export class TransformResourceData {
         routes,
         services,
         status,
+        pipelines,
       };
 
       if (this.utils) {

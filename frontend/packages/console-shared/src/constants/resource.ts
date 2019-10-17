@@ -37,3 +37,6 @@ export enum DEPLOYMENT_PHASE {
   failed = 'Failed',
   cancelled = 'Cancelled',
 }
+
+// label to get the pipelines
+export const PIPELINE_REF = 'app.openshift.io/pipeline-ref';
