@@ -551,7 +551,9 @@ export class TransformResourceData {
 
   getPipelineRunsForPipeline = (pipeline: Pipeline): PipelineRun[] => {
     const PIPELINE_RUN_LABEL = 'tekton.dev/pipeline';
-    const pipelineRuns = _.get(this.resources, ['pipelineRuns', 'data']);
+    const {
+      pipelineRuns: { data: pipelineRuns },
+    } = this.resources;
     const pipelineName = pipeline.metadata.name;
     return pipelineRuns.filter((pr: PipelineRun) => {
       return (
@@ -563,7 +565,9 @@ export class TransformResourceData {
   };
 
   getPipelinesForResource = (resource: K8sResourceKind): PipelineOverviewItem => {
-    const pipelines = _.get(this.resources, ['pipelines', 'data']);
+    const {
+      pipelines: { data: pipelines },
+    } = this.resources;
     const pipelineName = _.get(resource, ['metadata', 'labels', PIPELINE_REF], null);
     if (!pipelineName) return null;
     const resourcePipeline = pipelines.find((pl) => pl.metadata.name === pipelineName);
