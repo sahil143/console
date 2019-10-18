@@ -558,8 +558,8 @@ export class TransformResourceData {
     return pipelineRuns.filter((pr: PipelineRun) => {
       return (
         pipelineName ===
-        (_.get(pr, ['metadata', 'labels', PIPELINE_RUN_LABEL], null) ||
-          _.get(pr, ['spec', 'pipelineRef', 'name'], null))
+        (_.get(pr, ['spec', 'pipelineRef', 'name'], null) ||
+          _.get(pr, ['metadata', 'labels', PIPELINE_RUN_LABEL], null))
       );
     });
   };
