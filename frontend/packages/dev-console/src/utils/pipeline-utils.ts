@@ -1,13 +1,16 @@
 import * as _ from 'lodash';
 import { formatDuration } from '@console/internal/components/utils/datetime';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_WAITING,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
+  FirehoseResource,
 } from '@console/internal/components/utils';
-import { runStatus } from './pipeline-augment';
+import { PipelineOverviewItem } from '@console/shared';
+import { PipelineRunModel, PipelineModel } from '../models';
+import { runStatus, Pipeline, PipelineRun } from './pipeline-augment';
 
 interface Resources {
   inputs?: Resource[];
@@ -67,6 +70,9 @@ export const ListFilterLabels = {
   [ListFilterId.Failed]: 'Failed',
   [ListFilterId.Succeeded]: 'Complete',
 };
+
+// label to get the pipelines
+export const PIPELINE_REF = 'app.openshift.io/pipeline-ref';
 
 // to be used by both Pipeline and Pipelinerun visualisation
 const sortTasksByRunAfterAndFrom = (
@@ -248,4 +254,51 @@ export const containerToLogSourceStatus = (container: ContainerStatus): string =
     return LOG_SOURCE_TERMINATED;
   }
   return LOG_SOURCE_RUNNING;
+};
+
+export const tknPipelineAndPipelineRunsResources = (namespace: string): FirehoseResource[] => {
+  return [
+    {
+      isList: true,
+      kind: referenceForModel(PipelineRunModel),
+      namespace,
+      prop: 'pipelineRuns',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(PipelineModel),
+      namespace,
+      prop: 'pipelines',
+    },
+  ];
+};
+
+const getPipelineRunsForPipeline = (pipeline: Pipeline, props): PipelineRun[] => {
+  if (!props && !props.pipelineRuns) return undefined;
+  const pipelineRunsData = props.pipelineRuns.data;
+  const PIPELINE_RUN_LABEL = 'tekton.dev/pipeline';
+  const pipelineName = pipeline.metadata.name;
+  return pipelineRunsData.filter((pr: PipelineRun) => {
+    return (
+      pipelineName ===
+      (_.get(pr, ['spec', 'pipelineRef', 'name'], null) ||
+        _.get(pr, ['metadata', 'labels', PIPELINE_RUN_LABEL], null))
+    );
+  });
+};
+
+export const getPipelinesAndPipelineRunsForResource = (
+  resource: K8sResourceKind,
+  props,
+): { pipelines: PipelineOverviewItem } => {
+  if (!props && !props.pipelines) return undefined;
+  const pipelinesData = props.pipelines.data;
+  const pipelineName = _.get(resource, ['metadata', 'labels', PIPELINE_REF], null);
+  if (!pipelineName) return null;
+  const resourcePipeline = pipelinesData.find((pl) => pl.metadata.name === pipelineName);
+  const pipelines = {
+    obj: resourcePipeline,
+    pipelineRuns: getPipelineRunsForPipeline(resourcePipeline, props),
+  };
+  return { pipelines };
 };
