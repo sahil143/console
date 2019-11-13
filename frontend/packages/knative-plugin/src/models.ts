@@ -105,7 +105,7 @@ export const EventSourceApiServerModel: K8sKind = {
   kind: 'ApiServerSource',
   label: 'ApiServerSource',
   labelPlural: 'ApiServerSources',
-  plural: 'ApiServerSources',
+  plural: 'apiserversources',
   id: 'apiserversource',
   abbr: 'ASS',
   namespaced: true,

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { ListGroup, Button } from 'patternfly-react';
+import { PodStatus } from '@console/shared';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { RevisionModel } from '@console/knative-plugin';
@@ -19,19 +20,24 @@ export type RevisionsOverviewListItemProps = {
 };
 
 const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
-  revision: {
-    metadata: { name, namespace },
-  },
-  service: {
-    status: { traffic },
-  },
+  revision,
+  service,
 }) => {
-  const getTraffic = (revision: string) => {
+  const {
+    metadata: { name, namespace },
+  } = revision;
+  const {
+    status: { traffic },
+  } = service;
+  const getTraffic = (revName: string) => {
     if (!traffic || !traffic.length) {
       return null;
     }
-    return `${_.get(_.find(traffic, { revisionName: revision }), 'percent', 0)}%`;
+    const trafficPercent = _.get(_.find(traffic, { revisionName: revName }), 'percent', null);
+    return trafficPercent ? `${trafficPercent}%` : null;
   };
+  const deploymentData = _.get(revision, 'resources.current.obj.metadata.ownerReferences[0]', []);
+  const current = _.get(revision, 'resources.current', null);
   return (
     <li className="list-group-item">
       <div className="row">
@@ -40,6 +46,32 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
         </div>
         <span className="col-lg-4 col-md-4 col-sm-4 text-right">{getTraffic(name)}</span>
       </div>
+      {deploymentData && (
+        <div className="odc-revision-deployment-list">
+          <div className="row">
+            <div className="col-lg-8 col-md-8 col-sm-8">
+              <ResourceLink
+                kind={deploymentData.kind}
+                name={deploymentData.name}
+                namespace={namespace}
+              />
+            </div>
+            {revision.kind === RevisionModel.kind && (
+              <div className="col-lg-4 col-md-4 col-sm-4">
+                <div className="odc-pod-ring">
+                  <PodStatus
+                    standalone
+                    data={current ? current.pods : []}
+                    size={25}
+                    innerRadius={7}
+                    outerRadius={12}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </li>
   );
 };

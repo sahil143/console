@@ -3,3 +3,9 @@
   flex-direction: row;
   justify-content: space-between;
 }
+.odc-revision-deployment-list {
+  padding: 15px 15px 0px 20px;
+  .odc-pod-ring {
+    width: 25px;
+  }
+}
