@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { ListGroup, Button } from 'patternfly-react';
 import { PodStatus } from '@console/shared';
+import { ChartLabel } from '@patternfly/react-charts';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { RevisionModel } from '@console/knative-plugin';
@@ -65,6 +66,9 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
                     size={25}
                     innerRadius={7}
                     outerRadius={12}
+                    title={`${current.pods.length}`}
+                    titleComponent={<ChartLabel style={{ fontSize: '12px' }} />}
+                    showTooltip={false}
                   />
                 </div>
               </div>

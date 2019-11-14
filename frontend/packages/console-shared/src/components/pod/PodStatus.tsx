@@ -24,6 +24,7 @@ type PodStatusProps = {
   data: ExtPodKind[];
   showTooltip?: boolean;
   title?: string;
+  titleComponent?: React.ReactElement<any>;
   subTitle?: string;
 };
 
@@ -98,6 +99,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
       showTooltip = true,
       title = '',
       subTitle = '',
+      titleComponent,
     } = this.props;
     const { vData, updateOnEnd, tipIndex } = this.state;
 
@@ -133,7 +135,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
     );
 
     return (
-      <Tooltip content={tipContent}>
+      <Tooltip isVisible={showTooltip} content={tipContent}>
         <ChartDonut
           events={tooltipEvent}
           animate={{
@@ -148,6 +150,7 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
           height={size}
           width={size}
           title={title}
+          titleComponent={titleComponent}
           subTitle={subTitle}
           allowTooltip={false}
           labels={() => null}
