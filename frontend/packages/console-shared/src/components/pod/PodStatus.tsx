@@ -134,40 +134,40 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
       </div>
     );
 
-    return (
-      <Tooltip isVisible={showTooltip} content={tipContent}>
-        <ChartDonut
-          events={tooltipEvent}
-          animate={{
-            duration: ANIMATION_DURATION,
-            onEnd: updateOnEnd ? this.doUpdate : undefined,
-          }}
-          standalone={standalone}
-          innerRadius={innerRadius}
-          radius={outerRadius}
-          groupComponent={x && y ? <g transform={`translate(${x}, ${y})`} /> : undefined}
-          data={vData}
-          height={size}
-          width={size}
-          title={title}
-          titleComponent={titleComponent}
-          subTitle={subTitle}
-          allowTooltip={false}
-          labels={() => null}
-          /*
-            // @ts-ignore */
-          padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
-          style={{
-            data: {
-              fill: ({ datum }) => podColor[datum.x],
-              stroke: ({ datum }) =>
-                !podStatusIsNumeric(datum.x) && datum.y > 0 ? '#BBBBBB' : 'none',
-              strokeWidth: 1,
-            },
-          }}
-        />
-      </Tooltip>
+    const donut = (
+      <ChartDonut
+        events={tooltipEvent}
+        animate={{
+          duration: ANIMATION_DURATION,
+          onEnd: updateOnEnd ? this.doUpdate : undefined,
+        }}
+        standalone={standalone}
+        innerRadius={innerRadius}
+        radius={outerRadius}
+        groupComponent={x && y ? <g transform={`translate(${x}, ${y})`} /> : undefined}
+        data={vData}
+        height={size}
+        width={size}
+        title={title}
+        titleComponent={titleComponent}
+        subTitle={subTitle}
+        allowTooltip={false}
+        labels={() => null}
+        /*
+        // @ts-ignore */
+        padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
+        style={{
+          data: {
+            fill: ({ datum }) => podColor[datum.x],
+            stroke: ({ datum }) =>
+              !podStatusIsNumeric(datum.x) && datum.y > 0 ? '#BBBBBB' : 'none',
+            strokeWidth: 1,
+          },
+        }}
+      />
     );
+
+    return showTooltip ? <Tooltip content={tipContent}>{donut}</Tooltip> : <>{donut}</>;
   }
 }
 
