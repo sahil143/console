@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FlagsObject } from '@console/internal/reducers/features';
 import { Extension } from './base';
+import { PERSPECTIVE, PAGE_REDIRECT } from '@console/shared';
 
 namespace ExtensionProperties {
   export interface Perspective {
@@ -17,7 +18,12 @@ namespace ExtensionProperties {
     /** The function to get perspective landing page URL for k8s. */
     getK8sLandingPageURL: GetLandingPage;
     /** The function to get redirect URL for import flow. */
-    getImportRedirectURL: (project: string) => string;
+    getRedirectURL: (
+      perspective: PERSPECTIVE,
+      page: PAGE_REDIRECT,
+      project: string,
+      resName?: string,
+    ) => string;
   }
 }
 

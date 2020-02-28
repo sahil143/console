@@ -6,12 +6,12 @@ import { history, AsyncComponent } from '@console/internal/components/utils';
 import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY, handleRedirect, PAGE_REDIRECT } from '@console/shared';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { doContextualBinding } from '../../utils/application-utils';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
-import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
+import { createOrUpdateResources } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
 
 export interface ImportFormProps {
@@ -169,7 +169,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     resourceActions
       .then(() => {
         actions.setSubmitting(false);
-        handleRedirect(projectName, perspective);
+        handleRedirect(perspective, PAGE_REDIRECT.importPage, projectName);
       })
       .catch((err) => {
         actions.setSubmitting(false);

@@ -42,6 +42,7 @@ import {
   getClusterUpdateTimestamp,
   isClusterUpdateActivity,
 } from './components/dashboards-page/activity';
+import { getRedirectURL } from '@console/shared';
 
 type ConsumedExtensions =
   | Perspective
@@ -62,7 +63,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       getLandingPageURL: (flags) =>
         flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects',
       getK8sLandingPageURL: () => '/search',
-      getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
+      getRedirectURL,
     },
   },
   {

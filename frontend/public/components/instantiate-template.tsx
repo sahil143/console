@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { ANNOTATIONS } from '@console/shared';
+import { ANNOTATIONS, handleRedirect, PAGE_REDIRECT } from '@console/shared';
 import {
   getImageForIconClass,
   getTemplateIcon,
@@ -19,7 +19,6 @@ import {
   LoadingBox,
   LoadError,
   NsDropdown,
-  resourcePathFromModel,
 } from './utils';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
@@ -29,6 +28,8 @@ import {
   TemplateInstanceKind,
   TemplateParameter,
 } from '../module/k8s';
+import { getActivePerspective } from '../reducers/ui';
+import { RootState } from '../redux';
 
 const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
@@ -112,8 +113,9 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
 };
 TemplateInfo.displayName = 'TemplateInfo';
 
-const stateToProps = ({ k8s }) => ({
-  models: k8s.getIn(['RESOURCES', 'models']),
+const stateToProps = (state: RootState) => ({
+  models: state.k8s.getIn(['RESOURCES', 'models']),
+  activePerspective: getActivePerspective(state),
 });
 
 class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState> {
@@ -208,12 +210,11 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
       .then((secret: K8sResourceKind) => {
         return this.createTemplateInstance(secret).then((instance: TemplateInstanceKind) => {
           this.setState({ inProgress: false });
-          history.push(
-            resourcePathFromModel(
-              TemplateInstanceModel,
-              instance.metadata.name,
-              instance.metadata.namespace,
-            ),
+          handleRedirect(
+            this.props.activePerspective,
+            PAGE_REDIRECT.templateInstantiate,
+            instance.metadata.name,
+            instance.metadata.namespace,
           );
         });
       })
@@ -362,6 +363,7 @@ type TemplateFormProps = {
   obj: any;
   preselectedNamespace: string;
   models: any;
+  activePerspective: string;
 };
 
 type TemplateFormState = {

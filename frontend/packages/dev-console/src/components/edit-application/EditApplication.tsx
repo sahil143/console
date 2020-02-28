@@ -6,16 +6,14 @@ import { getActivePerspective } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { history } from '@console/internal/components/utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
-import {
-  createOrUpdateResources as createOrUpdateGitResources,
-  handleRedirect,
-} from '../import/import-submit-utils';
+import { createOrUpdateResources as createOrUpdateGitResources } from '../import/import-submit-utils';
 import { validationSchema as gitValidationSchema } from '../import/import-validation-utils';
 import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';
 import { deployValidationSchema } from '../import/deployImage-validation-utils';
 import EditApplicationForm from './EditApplicationForm';
 import { EditApplicationProps } from './edit-application-types';
 import { getPageHeading, getInitialValues } from './edit-application-utils';
+import { PAGE_REDIRECT, handleRedirect } from '@console/shared';
 
 export interface StateProps {
   perspective: string;
@@ -52,7 +50,7 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
       .then(() => {
         actions.setSubmitting(false);
         actions.setStatus({ error: '' });
-        handleRedirect(namespace, perspective);
+        handleRedirect(perspective, PAGE_REDIRECT.importPage, namespace);
       })
       .catch((err) => {
         actions.setSubmitting(false);

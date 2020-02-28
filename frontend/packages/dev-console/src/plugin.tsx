@@ -37,6 +37,7 @@ import {
   newClusterTaskTemplate,
 } from './templates';
 import reducer from './utils/reducer';
+import { getRedirectURL } from '@console/shared/src/utils/page-redirect.utils';
 
 const {
   ClusterTaskModel,
@@ -387,7 +388,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       icon: <CodeIcon />,
       getLandingPageURL: () => '/topology',
       getK8sLandingPageURL: () => '/add',
-      getImportRedirectURL: (project) => `/topology/ns/${project}`,
+      getRedirectURL,
     },
   },
   {

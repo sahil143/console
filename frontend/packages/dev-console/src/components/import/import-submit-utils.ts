@@ -15,8 +15,6 @@ import {
   ServiceModel as KnServiceModel,
 } from '@console/knative-plugin';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
-import * as plugins from '@console/internal/plugins';
-import { history } from '@console/internal/components/utils';
 import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { AppResources } from '../edit-application/edit-application-types';
@@ -506,12 +504,4 @@ export const createOrUpdateResources = async (
   }
 
   return Promise.all(requests);
-};
-
-export const handleRedirect = (project: string, perspective: string) => {
-  const perspectiveData = plugins.registry
-    .getPerspectives()
-    .find((item) => item.properties.id === perspective);
-  const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
-  history.push(redirectURL);
 };
