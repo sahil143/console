@@ -91,7 +91,9 @@ export const createTopologyNodeData = (
     data: {
       url: getRoutesURL(dc),
       kind: referenceFor(deploymentConfig),
-      editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
+      editURL:
+        deploymentsAnnotations['app.openshift.io/edit-url'] ??
+        deploymentsAnnotations['app.openshift.io/vcs-uri'],
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
       builderImage: builderImageIcon || defaultIcon,
       isKnativeResource:

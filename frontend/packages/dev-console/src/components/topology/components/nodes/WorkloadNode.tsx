@@ -86,13 +86,13 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
           canDrop={canDrop}
           {...rest}
           attachments={[
-            repoIcon && (
+            repoIcon && workloadData.editURL && (
               <Tooltip key="edit" content="Edit Source Code" position={TooltipPosition.right}>
                 <Decorator
                   x={cx + radius - decoratorRadius * 0.7}
                   y={cy + radius - decoratorRadius * 0.7}
                   radius={decoratorRadius}
-                  href={workloadData.editUrl}
+                  href={workloadData.editURL}
                   external
                 >
                   <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
