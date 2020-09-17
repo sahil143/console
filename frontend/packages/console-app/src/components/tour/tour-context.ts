@@ -1,4 +1,4 @@
-import { createContext, useReducer, Reducer, Dispatch, ReducerAction } from 'react';
+import { createContext, useReducer, Reducer, Dispatch, ReducerAction, useRef } from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
@@ -16,9 +16,22 @@ import {
 } from './utils';
 import { TourDataType, Step } from './type';
 
-export const tourReducer = (state: TourState, action: TourActions) => {
+type Action = {
+  type: TourActions;
+  payload?: {
+    completed: boolean;
+  };
+};
+
+export const tourReducer = (state: TourState, action: Action) => {
   const { stepNumber } = state;
-  switch (action) {
+  switch (action.type) {
+    case TourActions.intialize:
+      return {
+        completedTour: action.payload.completed,
+        stepNumber: 0,
+        startTour: !action.payload.completed,
+      };
     case TourActions.start:
       return { startTour: true, completedTour: false, stepNumber: 0 };
     case TourActions.next:
@@ -39,7 +52,7 @@ export const tourReducer = (state: TourState, action: TourActions) => {
   }
 };
 
-type TourReducer = Reducer<TourState, TourActions>;
+type TourReducer = Reducer<TourState, Action>;
 
 type TourContextType = {
   tourState?: TourState;
@@ -89,6 +102,11 @@ export const useTourValuesForContext = (): TourContextType => {
     stepNumber: 0,
     startTour: !completed,
   });
+  const perspectiveRef = useRef<string>(activePerspective);
+  if (perspectiveRef.current !== activePerspective) {
+    perspectiveRef.current = activePerspective;
+    tourDispatch({ type: TourActions.intialize, payload: { completed } });
+  }
   if (!tour) return { tour: null };
   const {
     properties: {
