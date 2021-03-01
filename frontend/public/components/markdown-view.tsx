@@ -44,6 +44,7 @@ const markdownConvert = (markdown, extensions?: string[]) => {
     allowedAttributes: {
       a: ['href', 'target', 'rel', 'data-*'],
       button: ['class', 'data-*'],
+      '*': ['data-*'],
     },
     allowedSchemes: ['http', 'https', 'mailto'],
     transformTags: {
